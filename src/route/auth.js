@@ -4,6 +4,7 @@ const express = require('express')
 const router = express.Router()
 
 const { User } = require('../class/user')
+const { Confirm } = require('../class/confirm')
 
 User.create({
   email: 'test@mail.com',
@@ -63,6 +64,13 @@ router.post('/signup', function (req, res) {
   }
 
   try {
+    const user = User.getByEmail(email)
+
+    if (user) {
+      return res.status(400).json({
+        message: 'User with such email already exists',
+      })
+    }
     User.create({ email, password, role })
     return res.status(200).json({
       message: 'Successfully signed up!',
@@ -72,10 +80,96 @@ router.post('/signup', function (req, res) {
       message: 'Registration failed',
     })
   }
+})
 
-  return res.status(201).json({
-    message: 'Successfully signed up!',
+router.get('/recovery', function (req, res) {
+  return res.render('recovery', {
+    name: 'recovery',
+    component: ['back-button', 'field'],
+    title: 'Recovery page',
+
+    data: {},
   })
+})
+
+router.post('/recovery', function (req, res) {
+  const { email } = req.body
+  console.log(email)
+
+  if (!email) {
+    return res.status(400).json({
+      message: 'Error. Required fields are empty.',
+    })
+  }
+
+  try {
+    const user = User.getByEmail(email)
+
+    if (!user) {
+      return res.status(400).json({
+        message: 'No user exists with such email',
+      })
+    }
+
+    Confirm.create(email)
+    return res.status(200).json({
+      message: 'Check your email for reset code',
+    })
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    })
+  }
+})
+
+router.get('/recovery-confirm', function (req, res) {
+  return res.render('recovery-confirm', {
+    name: 'recovery-confirm',
+    component: ['back-button', 'field', 'field-password'],
+    title: 'Recovery Confirm page',
+    data: {},
+  })
+})
+
+router.post('/recovery-confirm', function (req, res) {
+  const { password, code } = req.body
+  console.log(password, code)
+
+  if (!code || !password) {
+    return res.status(400).json({
+      message: 'Error. Required fields are empty.',
+    })
+  }
+
+  try {
+    const email = Confirm.getdata(Number(code))
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Such code doesn't exist",
+      })
+    }
+
+    const user = User.getByEmail(email)
+
+    if (!user) {
+      return res.status(400).json({
+        message: 'No user exists with such email',
+      })
+    }
+
+    user.password = password
+
+    console.log(user)
+
+    return res.status(200).json({
+      message: 'Password is changed successfully',
+    })
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    })
+  }
 })
 
 // Підключаємо роутер до бек-енду
