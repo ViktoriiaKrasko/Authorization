@@ -26,9 +26,9 @@
             </div>
 
             <div class="form__item">
-                {{> field-password action="signupForm.change" name="password" label="Repeat password"
+                {{> field-password action="signupForm.change" name="passwordRepeat" label="Repeat password"
                 placeholder="Enter password"}}
-                <span name="password" class="form__error">Error</span>
+                <span name="passwordRepeat" class="form__error">Error</span>
             </div>
 
             <div class="form__item">
@@ -38,8 +38,8 @@
             </div>
         </div>
 
-        <button onclick="signupForm.submit()" class="button" type="button">Sign Up</button>
-        <span class="alert alert--error">Attention! Error!</span>
+        <button onclick="signupForm.submit()" class="button button--disabled" type="button">Sign Up</button>
+        <span class="alert alert--disabled">Attention! Error!</span>
     </form>
 
 </div>
