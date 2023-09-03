@@ -8,9 +8,21 @@ const { Confirm } = require('../class/confirm')
 const { Session } = require('../class/session')
 
 User.create({
-  email: 'test@mail.com',
+  email: 'user@mail.com',
   password: 123,
   role: 1,
+})
+
+User.create({
+  email: 'admin@mail.com',
+  password: 123,
+  role: 2,
+})
+
+User.create({
+  email: 'developer@mail.com',
+  password: 123,
+  role: 3,
 })
 
 // ================================================================
@@ -286,6 +298,42 @@ router.post('/login', function (req, res) {
       message: err.message,
     })
   }
+})
+
+router.get('/user-item', function (req, res) {
+  return res.render('user-item', {
+    name: 'user-item',
+    component: ['back-button'],
+    title: 'User item page',
+    data: {},
+  })
+})
+
+router.get('/user-item-data', function (req, res) {
+  const { id } = req.query
+
+  if (!id) {
+    return res.status(400).json({
+      message: 'No user id',
+    })
+  }
+
+  const user = User.getById(Number(id))
+
+  if (!user) {
+    return res.status(400).json({
+      message: 'No user with this id',
+    })
+  }
+
+  return res.status(200).json({
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      isConfirm: user.isConfirm,
+    },
+  })
 })
 
 // Підключаємо роутер до бек-енду

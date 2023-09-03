@@ -33,8 +33,10 @@ router.get('/logout', function (req, res) {
 })
 
 const auth = require('./auth')
+const user = require('./user')
 
 router.use('/', auth)
+router.use('/', user)
 
 // Експортуємо глобальний роутер
 module.exports = router
