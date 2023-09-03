@@ -1,24 +1,19 @@
+import { Form } from '../../script/form'
+
 import {
-  Form,
-  REG_EXP_EMAIL,
-  REG_EXP_PASSWORD,
-} from '../../script/form'
+  getTokenSession,
+  saveSession,
+  getSession,
+} from '../../script/session'
 
-import { saveSession } from '../../script/session'
-
-class RecoveryConfirmForm extends Form {
+class SignupConfirmForm extends Form {
   FIELD_NAME = {
     CODE: 'code',
-    PASSWORD: 'password',
-    PASSWORD_REPEAT: 'passwordRepeat',
   }
 
   FIELD_ERROR = {
     IS_EMPTY: "This field shouldn't be empty",
     IS_BIG: 'Too many characters, remove extra',
-    PASSWORD:
-      'Password should consist of at least 8 characters including at least 1 digit, small and capital letters',
-    PASSWORD_REPEAT: 'Passwords do not match',
   }
 
   validate = (name, value) => {
@@ -29,20 +24,6 @@ class RecoveryConfirmForm extends Form {
     //validation of excess characters
     if (String(value).length > 20) {
       return this.FIELD_ERROR.IS_BIG
-    }
-    //validation of password to regex
-    if (name === this.FIELD_NAME.PASSWORD) {
-      if (!REG_EXP_PASSWORD.test(String(value)))
-        return this.FIELD_ERROR.PASSWORD
-    }
-    //validation of second password to match first
-    if (name === this.FIELD_NAME.PASSWORD_REPEAT) {
-      if (
-        String(value) !==
-        this.value[this.FIELD_NAME.PASSWORD]
-      ) {
-        return this.FIELD_ERROR.PASSWORD_REPEAT
-      }
     }
   }
 
@@ -55,7 +36,7 @@ class RecoveryConfirmForm extends Form {
       this.setAlert('progress', 'In progress')
 
       try {
-        const res = await fetch('/recovery-confirm', {
+        const res = await fetch('/signup-confirm', {
           method: 'POST',
           headers: {
             'Content-type': 'application/json',
@@ -83,10 +64,33 @@ class RecoveryConfirmForm extends Form {
       [this.FIELD_NAME.CODE]: Number(
         this.value[this.FIELD_NAME.CODE],
       ),
-      [this.FIELD_NAME.PASSWORD]:
-        this.value[this.FIELD_NAME.PASSWORD],
+      token: getTokenSession(),
     })
   }
 }
 
-window.recoveryConfirmForm = new RecoveryConfirmForm()
+window.signupConfirmForm = new SignupConfirmForm()
+
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    if (window.session) {
+      if (window.session.user.isConfirm) {
+        location.assign('/')
+      }
+    } else {
+      location.assign('/')
+    }
+  } catch (err) {}
+
+  document
+    .querySelector('#renew')
+    .addEventListener('click', (event) => {
+      event.preventDefault()
+
+      const session = getSession()
+
+      location.assign(
+        `/signup-confirm?renew=true&email=${session.user.email}`,
+      )
+    })
+})

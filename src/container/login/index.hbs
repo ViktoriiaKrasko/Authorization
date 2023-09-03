@@ -7,40 +7,22 @@
     <header>{{> back-button}}</header>
 
     <form class="page__section">
-        <h1 class="page__title">Registration</h1>
+        <h1 class="page__title">Log In</h1>
         <div class="form">
             <div class="form__item">
                 {{> field action="signupForm.change" label="Email" type="email" name="email" placeholder="Enter email"}}
                 <span name="email" class="form__error">Error</span>
             </div>
             <div class="form__item">
-                {{> field-select action="signupForm.change" name="role" label="Role"
-                placeholder="Choose your role" list=data.role}}
-                <span name="role" class="form__error">Error</span>
-            </div>
-
-            <div class="form__item">
                 {{> field-password action="signupForm.change" name="password" label="Password"
                 placeholder="Enter password"}}
                 <span name="password" class="form__error">Error</span>
             </div>
-
-            <div class="form__item">
-                {{> field-password action="signupForm.change" name="passwordRepeat" label="Repeat password"
-                placeholder="Enter password"}}
-                <span name="passwordRepeat" class="form__error">Error</span>
-            </div>
-
-            <div class="form__item">
-                {{> field-checkbox action="signupForm.change" name="isConfirm" label="I agree to Terms and Conditions"
-                }}
-                <span name="isConfirm" class="form__error">Error</span>
-            </div>
         </div>
 
-        <button onclick="signupForm.submit()" class="button button--disabled" type="button">Sign Up</button>
+        <button onclick="signupForm.submit()" class="button button--disabled" type="button">Log In</button>
         <span class="alert alert--disabled">Attention! Error!</span>
-        <span class="link__prefix">Already have account? <a href="/login" class="link">Sign In</a></span>
+        <span class="link__prefix">Forgot password? <a href="/recovery" class="link">Recover</a></span>
     </form>
 
 </div>
